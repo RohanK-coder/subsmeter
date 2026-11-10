@@ -1,0 +1,21 @@
+{
+  "name": "subsmeter",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:web": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/api && npm run build -w apps/web"
+  },
+  "allowScripts": {
+    "@prisma/client@6.19.3": true,
+    "prisma@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
+  }
+}
