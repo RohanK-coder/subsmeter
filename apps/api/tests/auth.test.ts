@@ -44,9 +44,8 @@ describe("auth and tenant isolation", () => {
   });
 
   afterAll(async () => {
-    await prisma.tenant.deleteMany({ where: { name: { startsWith: run } } }); // cascades
-    await prisma.$disconnect();
-  });
+  await prisma.tenant.deleteMany({ where: { name: { startsWith: run } } }); // cascades
+});
 
   it("signup creates an OWNER in a new tenant and sets an httpOnly cookie", async () => {
     const res = await request(app)

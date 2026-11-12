@@ -4,6 +4,7 @@ import { GuestRoute, ProtectedRoute } from "@/auth/guards";
 import AppShell from "@/components/AppShell";
 import DashboardPage from "@/pages/DashboardPage";
 import LoginPage from "@/pages/LoginPage";
+import PricingPage from "@/pages/PricingPage";
 import SignupPage from "@/pages/SignupPage";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>
               <Route index element={<DashboardPage />} />
+              <Route path="plans" element={<PricingPage />} />
             </Route>
           </Route>
 

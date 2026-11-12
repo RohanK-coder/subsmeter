@@ -1,19 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/auth/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/lib/api";
+import { formatDate, formatNumber, formatPrice, metricLabel } from "@/lib/format";
+import { useSubscription } from "@/lib/queries";
 import type { Member } from "@/types";
 
 export default function DashboardPage() {
   const { user, tenant } = useAuth();
   const isOwner = user?.role === "OWNER";
+  const subscription = useSubscription();
 
   const members = useQuery({
     queryKey: ["tenant", "members"],
     queryFn: () => api<{ members: Member[] }>("/tenant/members"),
     enabled: isOwner,
   });
+
+  const sub = subscription.data;
 
   return (
     <div className="space-y-6">
@@ -23,6 +30,62 @@ export default function DashboardPage() {
           You are signed in to <span className="font-medium">{tenant?.name}</span>.
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <CardTitle>Current plan</CardTitle>
+              <CardDescription>Your subscription and monthly quotas</CardDescription>
+            </div>
+            <Link to="/plans" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              View plans
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm">
+          {subscription.isLoading && <p className="text-muted-foreground">Loading…</p>}
+          {subscription.isError && (
+            <p className="text-destructive">{(subscription.error as Error).message}</p>
+          )}
+
+          {sub && (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold">{sub.plan.name}</span>
+                  <Badge variant={sub.status === "ACTIVE" ? "default" : "destructive"}>{sub.status}</Badge>
+                </div>
+                <span className="text-muted-foreground">
+                  {formatPrice(sub.plan.priceCents, sub.plan.currency)} / {sub.plan.interval}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-muted-foreground">
+                <span>Current period</span>
+                <span>
+                  {formatDate(sub.currentPeriodStart)} to {formatDate(sub.currentPeriodEnd)}
+                </span>
+              </div>
+
+              <ul className="divide-y rounded-md border">
+                {sub.plan.quotas.map((q) => (
+                  <li key={q.metric} className="flex items-center justify-between px-3 py-2">
+                    <span>{metricLabel(q.metric)}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="font-medium">{formatNumber(q.limit)} / month</span>
+                      <Badge variant="outline">
+                        {q.enforcement === "HARD" ? "Hard limit" : "Overage allowed"}
+                      </Badge>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-muted-foreground">Usage tracking against these limits arrives in Stage 3 and 4.</p>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

@@ -6,6 +6,7 @@ import { hashPassword, verifyPassword } from "../../lib/password";
 import { prisma } from "../../lib/prisma";
 import { generateRefreshToken, hashToken } from "../../lib/tokens";
 import type { LoginInput, SignupInput } from "./auth.schemas";
+import { createFreeSubscription } from "../subscriptions/subscription.service";
 
 const REFRESH_TTL_MS = env.REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000;
 
@@ -67,6 +68,7 @@ export async function signup(input: SignupInput): Promise<Session> {
           role: "OWNER",
         },
       });
+      await createFreeSubscription(tenant.id, tx); // NEW: every tenant starts on Free
       const refreshToken = await createRefreshToken(user.id, tx);
       return { tenant, user, refreshToken };
     });

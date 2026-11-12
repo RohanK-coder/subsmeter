@@ -8,8 +8,12 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "db:generate": "prisma generate",
+    "db:seed": "prisma db seed",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

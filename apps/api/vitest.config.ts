@@ -6,5 +6,7 @@ export default defineConfig({
     testTimeout: 20000,
     hookTimeout: 20000,
     fileParallelism: false,
+    isolate: false, // all test files share one module registry, so one Prisma client
+    setupFiles: ["./tests/setup.ts"],
   },
 });

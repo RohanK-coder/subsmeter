@@ -26,3 +26,29 @@ export interface Member {
   role: Role;
   createdAt: string;
 }
+export interface PlanQuota {
+  metric: string;
+  limit: number;
+  period: "MONTHLY";
+  enforcement: "HARD" | "SOFT";
+}
+
+export interface Plan {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  currency: string;
+  interval: string;
+  features: string[];
+  quotas: PlanQuota[];
+}
+
+export interface Subscription {
+  status: "ACTIVE" | "PAST_DUE" | "CANCELED";
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  plan: Plan;
+}

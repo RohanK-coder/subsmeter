@@ -10,6 +10,8 @@ import { errorHandler, notFound } from "./middleware/errorHandler";
 import { authRouter } from "./modules/auth/auth.routes";
 import { meRouter } from "./modules/me/me.routes";
 import { tenantRouter } from "./modules/tenants/tenant.routes";
+import { plansRouter } from "./modules/plans/plans.routes";
+import { subscriptionRouter } from "./modules/subscriptions/subscription.routes";
 
 export function createApp() {
   const app = express();
@@ -23,6 +25,11 @@ export function createApp() {
   // because it needs the raw request body.
   app.use(express.json());
   app.use(cookieParser());
+    app.use("/auth", authRouter);
+  app.use("/me", meRouter);
+  app.use("/tenant", tenantRouter);
+  app.use("/plans", plansRouter);
+  app.use("/subscription", subscriptionRouter);
 
   app.get("/health", async (_req, res) => {
     try {
